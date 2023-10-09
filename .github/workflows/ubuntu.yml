@@ -34,8 +34,7 @@ jobs:
     - name: Download tarballs
       if: steps.cache-tarballs.outputs.cache-hit !=  'true'
       run: wget https://files.dthompson.us/guile-sdl2/guile-sdl2-0.8.0.tar.gz
-    - run: gunzip guile-sdl2-0.8.0.tar.gz
-    - run: tar xvf guile-sdl2-0.8.0.tar
+    - run: tar xzvf guile-sdl2-0.8.0.tar.gz
   
 
           
