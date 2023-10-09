@@ -24,6 +24,7 @@ jobs:
         libsdl2-image-dev
         libsdl2-mixer-dev
         libsdl2-ttf-dev
+        libturbojpeg0-dev
     - name: Cache tarballs
       id: cache-tarballs
       uses: actions/cache@v3
