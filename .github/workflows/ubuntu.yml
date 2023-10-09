@@ -15,4 +15,28 @@ jobs:
         sudo apt-get update &&
         sudo apt-get install -y
         guile-3.0
+        libfreetype-dev
+        libmpg123-dev
+        libopenal-dev
+        libreadline-dev
+        libvorbis-dev
+        libsdl2-dev
+        libsdl2-image-dev
+        libsdl2-mixer-dev
+        libsdl2-ttf-dev
+    - name: Cache tarballs
+      id: cache-tarballs
+      uses: actions/cache@v3
+      with:
+        path: |
+          guile-sdl2-0.8.0.tar.gz
+        key: source-tarballs
+    - name: Download tarballs
+      if: steps.cache-tarballs.outputs.cache-hit !=  'true'
+      run: wget https://files.dthompson.us/guile-sdl2/guile-sdl2-0.8.0.tar.gz
+    - run: gunzip guile-sdl2-0.8.0.tar.gz
+    - run: tar xvf guile-sdl2-0.8.0.tar
+  
+
+          
    
