@@ -35,6 +35,16 @@ jobs:
       if: steps.cache-tarballs.outputs.cache-hit !=  'true'
       run: wget https://files.dthompson.us/guile-sdl2/guile-sdl2-0.8.0.tar.gz
     - run: tar xzvf guile-sdl2-0.8.0.tar.gz
+    - name: configure guile-sdl2
+      run: |
+        cd guile-sdl2-0.8.0
+        ./configure --prefix=`pwd`/../app
+    - name: make guile-sdl2
+      run: |
+        make
+    - run: ls -lR
+  
+    
   
 
           
