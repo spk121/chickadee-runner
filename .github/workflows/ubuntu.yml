@@ -39,10 +39,8 @@ jobs:
       run: |
         cd guile-sdl2-0.8.0
         ./configure --prefix=`pwd`/../app
-    - name: make guile-sdl2
-      run: |
-        cd guile-sdl2-0.8.0
         make
+        make install
     - run: ls -lR
   
     
