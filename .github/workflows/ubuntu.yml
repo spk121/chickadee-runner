@@ -30,14 +30,33 @@ jobs:
       with:
         path: |
           guile-sdl2-0.8.0.tar.gz
+          guile-opengl-0.2.0.tar.gz
+          chickadee-0.10.0.tar.gz
         key: source-tarballs
     - name: Download tarballs
       if: steps.cache-tarballs.outputs.cache-hit !=  'true'
-      run: wget https://files.dthompson.us/guile-sdl2/guile-sdl2-0.8.0.tar.gz
-    - run: tar xzvf guile-sdl2-0.8.0.tar.gz
-    - name: configure guile-sdl2
       run: |
+        wget https://files.dthompson.us/guile-sdl2/guile-sdl2-0.8.0.tar.gz
+        wget https://ftp.gnu.org/gnu/guile-opengl/guile-opengl-0.2.0.tar.gz
+        wget https://files.dthompson.us/chickadee/chickadee-0.10.0.tar.gz
+    - name: build guile-sdl2
+      run: |
+        tar xzvf guile-sdl2-0.8.0.tar.gz
         cd guile-sdl2-0.8.0
+        ./configure --prefix=`pwd`/../app
+        make
+        make install
+    - name: build guile-opengl
+      run: |
+        tar xzvf guile-opengl-0.2.0.tar.gz
+        cd guile-opengl-0.2.0
+        ./configure --prefix=`pwd`/../app
+        make
+        make install
+    - name: build chickadee
+      run: |
+        tar xzvf chickadee-0.10.0.tar.gz
+        cd chickadee-0.10.0
         ./configure --prefix=`pwd`/../app
         make
         make install
