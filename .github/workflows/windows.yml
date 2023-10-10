@@ -57,4 +57,46 @@ jobs:
          make -j4 V=1
          make install
       shell: msys2 -o igncr '{0}'
-    - run: ls -lR
+    - name: Cache tarballs
+      id: cache-tarballs
+      uses: actions/cache@v3
+      with:
+        path: |
+          guile-sdl2-0.8.0.tar.gz
+          guile-opengl-0.2.0.tar.gz
+          chickadee-0.10.0.tar.gz
+        key: source-tarballs
+    - name: Download tarballs
+      if: steps.cache-tarballs.outputs.cache-hit !=  'true'
+      run: |
+        wget https://files.dthompson.us/guile-sdl2/guile-sdl2-0.8.0.tar.gz
+        wget https://ftp.gnu.org/gnu/guile-opengl/guile-opengl-0.2.0.tar.gz
+        wget https://files.dthompson.us/chickadee/chickadee-0.10.0.tar.gz
+    - name: add env vars for app directory
+      run: |
+        echo "GUILE_LOAD_PATH=`pwd`/app/share/guile/site/3.0" >> $GITHUB_ENV
+        echo "GUILE_LOAD_COMPILED_PATH=`pwd`/app/lib/guile/3.0/site-ccache" >> $GITHUB_ENV
+    - name: build guile-sdl2
+      run: |
+        tar xzvf guile-sdl2-0.8.0.tar.gz
+        cd guile-sdl2-0.8.0
+        ./configure --prefix=`pwd`/../app
+        make
+        make install
+      shell: msys2 -o igncr '{0}'
+    - name: build guile-opengl
+      run: |
+        tar xzvf guile-opengl-0.2.0.tar.gz
+        cd guile-opengl-0.2.0
+        ./configure --prefix=`pwd`/../app
+        make
+        make install
+      shell: msys2 -o igncr '{0}'
+    - name: build chickadee
+      run: |
+        tar xzvf chickadee-0.10.0.tar.gz
+        cd chickadee-0.10.0
+        ./configure --prefix=`pwd`/../app
+        make
+        make install
+      shell: msys2 -o igncr '{0}'
