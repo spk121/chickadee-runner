@@ -1,54 +1,74 @@
-name: Ubuntu
+name: Ubuntu basic build-and-test
 
 on:
   # Allow manual triggering
   workflow_dispatch:
+  push:
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@v4
-      with:
-        repository: spk121/guile
-        fetch-depth: 0
     - name: Install packages
       run: >-
         sudo apt-get update &&
         sudo apt-get install -y
-        texlive
-        texlive-plain-generic
-        texinfo
-        autoconf
-        libtool
-        gettext
-        autopoint
-        gperf
-        pkg-config
-        lzip
-        libgc-dev
-        libgmp-dev
-        libltdl-dev
-        libncurses5-dev
-        libreadline6-dev
-        libunistring-dev
-    - name: Configure
-      run: |
-        export LANG=C.UTF-8 TERM=dumb VERBOSE=true DEBIAN_FRONTEND=noninteractive TZ=America/Los_Angeles
-        mkdir `pwd`/app
-        ./autogen.sh
-        ./configure CFLAGS="-g -O2 -Wall" --prefix=`pwd`/app
-    - name: Build
-      run: |
-        make -j4 V=1
-    - name: Run Unit Tests
-      run: make check V=1
-    - name: Archive Test Logs
-      if: success() || failure ()
-      uses: actions/upload-artifact@v3
+        guile-3.0-dev
+        libfreetype-dev
+        libmpg123-dev
+        libopenal-dev
+        libreadline-dev
+        libvorbis-dev
+        libsdl2-dev
+        libsdl2-image-dev
+        libsdl2-mixer-dev
+        libsdl2-ttf-dev
+        libturbojpeg0-dev
+    - name: Cache tarballs
+      id: cache-tarballs
+      uses: actions/cache@v3
       with:
-        name: Test Logs
-        path: ./*.log
+        path: |
+          guile-sdl2-0.8.0.tar.gz
+          guile-opengl-0.2.0.tar.gz
+          chickadee-0.10.0.tar.gz
+        key: source-tarballs
+    - name: Download tarballs
+      if: steps.cache-tarballs.outputs.cache-hit !=  'true'
+      run: |
+        wget https://files.dthompson.us/guile-sdl2/guile-sdl2-0.8.0.tar.gz
+        wget https://ftp.gnu.org/gnu/guile-opengl/guile-opengl-0.2.0.tar.gz
+        wget https://files.dthompson.us/chickadee/chickadee-0.10.0.tar.gz
+    - name: add env vars for app directory
+      run: |
+        echo "GUILE_LOAD_PATH=`pwd`/app/share/guile/site/3.0" >> $GITHUB_ENV
+        echo "GUILE_LOAD_COMPILED_PATH=`pwd`/app/lib/guile/3.0/site-ccache" >> $GITHUB_ENV
+    - name: build guile-sdl2
+      run: |
+        tar xzvf guile-sdl2-0.8.0.tar.gz
+        cd guile-sdl2-0.8.0
+        ./configure --prefix=`pwd`/../app
+        make
+        make install
+    - name: build guile-opengl
+      run: |
+        tar xzvf guile-opengl-0.2.0.tar.gz
+        cd guile-opengl-0.2.0
+        ./configure --prefix=`pwd`/../app
+        make
+        make install
+    - name: build chickadee
+      run: |
+        tar xzvf chickadee-0.10.0.tar.gz
+        cd chickadee-0.10.0
+        ./configure --prefix=`pwd`/../app
+        make
+        make install
+    - run: ls -lR
+  
+    
+  
+
+          
    
