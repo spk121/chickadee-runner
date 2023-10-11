@@ -88,10 +88,9 @@ jobs:
         echo "GUILE_LOAD_PATH=`pwd`/app/share/guile/site/3.0" >> $GITHUB_ENV
         echo "GUILE_LOAD_COMPILED_PATH=`pwd`/app/lib/guile/3.0/site-ccache" >> $GITHUB_ENV
         echo "PKG_CONFIG_PATH=`pwd`/app/lib/pkgconfig" >> $GITHUB_ENV
-        echo $GITHUB_ENV
     - name: build guile-sdl2
       run: |
-        echo $GITHUB_ENV
+        export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:`pwd`/app/lib/pkgconfig
         echo $PKG_CONFIG_PATH
         ls app/lib/pkgconfig
         cat app/lib/pkgconfig/guile-3.0.pc
