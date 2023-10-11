@@ -41,7 +41,15 @@ jobs:
           mingw-w64-${{matrix.env}}-readline
           mingw-w64-${{matrix.env}}-libunistring
           texinfo
+    - name: cache guile build
+      id: cache-guile-build
+      uses: actions/cache@v3
+      with:
+        path: |
+          guile
+        key: guile-build
     - name: checkout guile
+      if: steps.cache-guile-build.outputs.cache-hit !=  'true'
       uses: actions/checkout@v3
       with:
         repository: spk121/guile
@@ -49,6 +57,7 @@ jobs:
         fetch-depth: 0
         path: guile
     - name: build guile
+      if: steps.cache-guile-build.outputs.cache-hit !=  'true'
       run: |
         export LANG=C.UTF-8 TERM=dumb VERBOSE=true TZ=America/Los_Angeles
         mkdir `pwd`/app
