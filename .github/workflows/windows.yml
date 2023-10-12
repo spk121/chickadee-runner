@@ -40,6 +40,7 @@ jobs:
           mingw-w64-${{matrix.env}}-libiconv
           mingw-w64-${{matrix.env}}-readline
           mingw-w64-${{matrix.env}}-libunistring
+          mingw-w64-${{matrix.env}}-SDL2
           texinfo
 
     - name: restore guile build
