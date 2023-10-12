@@ -92,6 +92,7 @@ jobs:
       run: |
         export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:`pwd`/app/lib/pkgconfig
         echo $PKG_CONFIG_PATH
+        export GUILE=`pwd`/app/bin/guile
         ls app/lib/pkgconfig
         cat app/lib/pkgconfig/guile-3.0.pc
         tar xzvf guile-sdl2-0.8.0.tar.gz
