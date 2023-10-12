@@ -41,15 +41,16 @@ jobs:
           mingw-w64-${{matrix.env}}-readline
           mingw-w64-${{matrix.env}}-libunistring
           texinfo
-    - name: cache guile build
-      id: cache-guile-build
-      uses: actions/cache@v3
+
+    - name: restore guile build
+      id: guile-build-restore
+      uses: actions/cache/restore@v3
       with:
         path: |
-          guile
+          app
         key: guile-build
     - name: checkout guile
-      if: steps.cache-guile-build.outputs.cache-hit !=  'true'
+      if: steps.guile-build-restore.outputs.cache-hit !=  'true'
       uses: actions/checkout@v3
       with:
         repository: spk121/guile
@@ -57,7 +58,7 @@ jobs:
         fetch-depth: 0
         path: guile
     - name: build guile
-      if: steps.cache-guile-build.outputs.cache-hit !=  'true'
+      if: steps.guile-build-restore.outputs.cache-hit !=  'true'
       run: |
         export LANG=C.UTF-8 TERM=dumb VERBOSE=true TZ=America/Los_Angeles
         mkdir `pwd`/app
@@ -67,9 +68,16 @@ jobs:
          make -j4 V=1
          make install
       shell: msys2 -o igncr '{0}'
-    - name: Cache tarballs
+    - name: cache guile build
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          app
+        key: guile-build
+
+    - name: Restore tarballs
       id: cache-tarballs
-      uses: actions/cache@v3
+      uses: actions/cache/restore@v3
       with:
         path: |
           guile-sdl2-0.8.0.tar.gz
@@ -83,6 +91,15 @@ jobs:
         wget https://ftp.gnu.org/gnu/guile-opengl/guile-opengl-0.2.0.tar.gz
         wget https://files.dthompson.us/chickadee/chickadee-0.10.0.tar.gz
       shell: msys2 -o igncr '{0}'
+    - name: Cache tarballs
+      uses: actions/cache/save@v3
+      with:
+        path: |
+          guile-sdl2-0.8.0.tar.gz
+          guile-opengl-0.2.0.tar.gz
+          chickadee-0.10.0.tar.gz
+        key: source-tarballs
+    
     - name: add env vars for app directory
       run: |
         echo "GUILE_LOAD_PATH=`pwd`/app/share/guile/site/3.0" >> $GITHUB_ENV
